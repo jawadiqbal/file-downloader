@@ -2,6 +2,7 @@ const debug = require('debug')('file-downloader:*');
 const fs = require('fs');
 const axios = require('axios');
 const path = require('path');
+const checkDiskSpace = require('check-disk-space');
 
 const {
   DOWNLOAD_PATH
@@ -33,27 +34,36 @@ function download(req, res) {
     const fileSizeInHost = response.headers['content-length'];
     debug('File size in host: ', fileSizeInHost);
 
-    response.data.pipe(file);
-    file.on('finish', () => {
-      file.close(() => {
-        const downloadedFileSizeInBytes = fs.statSync(destination).size;
-        debug('Downloaded file size: ', downloadedFileSizeInBytes);
+    checkDiskSpace(__dirname).then((diskSpace) => {
+      debug('Disk size:          ', diskSpace.size);
+      debug('Free space in disk: ', diskSpace.free);
+      if (diskSpace.free < fileSizeInHost) {
+        debug('Operation failed: not enough space in disk');
+      } else {
+        response.data.pipe(file);
+        file.on('finish', () => {
+          file.close(() => {
+            const downloadedFileSizeInBytes = fs.statSync(destination).size;
+            debug('Downloaded file size: ', downloadedFileSizeInBytes);
 
-        if (downloadedFileSizeInBytes != fileSizeInHost) {
-          debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
-          fs.unlink(destination, () => {
-            // return res.status(500).send({
-            //   message: 'Download incomplete! removing file from disk.'
+            // eslint-disable-next-line eqeqeq
+            if (downloadedFileSizeInBytes != fileSizeInHost) {
+              debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
+              fs.unlink(destination, () => {
+                // return res.status(500).send({
+                //   message: 'Download incomplete! removing file from disk.'
+                // });
+                debug('Operation failed: incomplete download');
+              })
+            };
+
+            // return res.status(200).send({
+            //   message: 'Operation Successful!'
             // });
-            debug('Operation failed: incomplete download');
-          })
-        };
-
-        // return res.status(200).send({
-        //   message: 'Operation Successful!'
-        // });
-        debug('Operation successful: file saved to ', destination);
-      });
+            debug('Operation successful: file saved to ', destination);
+          });
+        });
+      }
     });
   }).catch(
     error => {
