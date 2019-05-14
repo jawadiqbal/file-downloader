@@ -42,15 +42,17 @@ function download(req, res) {
         if (downloadedFileSizeInBytes != fileSizeInHost) {
           debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
           fs.unlink(destination, () => {
-            return res.status(500).send({
-              message: 'Download incomplete! removing file from disk.'
-            });
+            // return res.status(500).send({
+            //   message: 'Download incomplete! removing file from disk.'
+            // });
+            debug('Operation failed: incomplete download');
           })
         };
 
-        return res.status(200).send({
-          message: 'Operation Successful!'
-        });
+        // return res.status(200).send({
+        //   message: 'Operation Successful!'
+        // });
+        debug('Operation successful: file saved to ', destination);
       });
     });
   }).catch(
@@ -59,11 +61,16 @@ function download(req, res) {
         file.close();
       });
       debug(error);
-      return res.status(400).send({
-        message: 'Cannot download file from target host!'
-      });
+      // return res.status(400).send({
+      //   message: 'Cannot download file from target host!'
+      // });
+      debug('Operation failed: host/network error');
     }
   );
+
+  return res.status(200).send({
+    message: 'Request accepted successfully!'
+  });
 }
 
 module.exports = {
