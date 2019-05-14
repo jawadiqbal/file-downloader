@@ -9,7 +9,9 @@ const envVarsSchema = Joi.object({
     .allow(['local', 'dev', 'test', 'live'])
     .default('local'),
   PORT: Joi.number()
-    .default(4040)
+    .default(4040),
+  DOWNLOAD_PATH: Joi.string()
+    .default('downloads')
 }).unknown().required();
 
 const {
@@ -23,13 +25,7 @@ if (error) {
 const config = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
-  postgres: {
-    host: envVars.POSTGRES_HOST,
-    port: envVars.POSTGRES_PORT,
-    db: envVars.POSTGRES_DB,
-    user: envVars.POSTGRES_USER,
-    pass: envVars.POSTGRES_PASS
-  }
+  downloadPath: envVars.DOWNLOAD_PATH
 };
 
 module.exports = config;
