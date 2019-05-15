@@ -34,7 +34,7 @@ function download(req, res) {
     const fileSizeInHost = response.headers['content-length'];
     debug('File size in host: ', fileSizeInHost);
 
-    checkDiskSpace(__dirname).then((diskSpace) => {
+    checkDiskSpace(DOWNLOAD_PATH).then((diskSpace) => {
       debug('Disk size:          ', diskSpace.size);
       debug('Free space in disk: ', diskSpace.free);
       if (diskSpace.free < fileSizeInHost) {
