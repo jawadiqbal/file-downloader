@@ -9,6 +9,53 @@ const {
   DOWNLOAD_PATH
 } = process.env;
 
+/**
+ * @api {post} /download Download target file
+ * @apiName Download
+ * @apiGroup Public APIs
+ * @apiVersion 1.0.0
+ * @apiDescription This is an api for downloading a file from a url with optional config.
+ *
+ * @apiParam {String} protocol Protocol
+ * @apiParam {String} url File URL
+ * @apiParam {Object} config Optional configuration for authenticated servers
+ *
+ * @apiParamExample {json} Request-Example HTTPS:
+ *    {
+ *      "protocol": "https",
+ *      "url": "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe"
+ *    }
+ * 
+ * @apiParamExample {json} Request-Example FTP Auth:
+ *    {
+ *	    "protocol": "ftp",
+ *	    "url": "ftp://demo.wftpserver.com/download/manual_en.pdf",
+ *	    "config": {
+ *		    "port": 21,
+ *	      "user": "demo-user",
+ *	      "password": "demo-user"
+ *      }
+ *    }
+ * 
+ * @apiParamExample {json} Request-Example FTP Public:
+ *    {
+ *      "protocol": "ftp",
+ *      "url": "ftp://speedtest.tele2.net/5MB.zip",
+ *      "config": {}
+ *    }
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "message": "Request accepted successfully!"
+ *    }
+ * 
+ * @apiErrorExample {json} Error-Response:
+ *    HTTP/1.1 400 Bad Request
+ *    {
+ *      "message": "Protocol not supported!"
+ *    }
+ */
 function download(req, res) {
   debug('requesting to /api/v1/download | POST | params: ', req.body);
 
@@ -88,9 +135,7 @@ function download(req, res) {
       ...config
       // ...securityConfig
     });
-  }
-
-  if (protocol === 'http' || protocol === 'https') {
+  } else if (protocol === 'http' || protocol === 'https') {
     axios({
       method: 'get',
       url,
@@ -132,6 +177,10 @@ function download(req, res) {
         debug('Operation failed: host/network error');
       }
     );
+  } else {
+    return res.status(400).send({
+      message: 'Protocol not supported!'
+    });
   }
 
   return res.status(200).send({
