@@ -2,10 +2,10 @@ const Joi = require('joi');
 
 module.exports = {
   // POST /api/url-shortener
-  urlShortenerRequestBody: {
+  downloadRequestBody: {
     body: {
-      baseUrl: Joi.string().uri().required(),
-      params: Joi.object().required()
+      url: Joi.string().uri().required(),
+      protocol: Joi.string().required()
     }
   }
 };
