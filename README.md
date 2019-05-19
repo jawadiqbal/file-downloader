@@ -19,6 +19,7 @@ To-Do:
 7. Add support for unit testing and network call mocking
 8. Ensure good code coverage
 9. Make use of ES6 `import`
+10. Configurable timeout for slow connections
 
 _important_
 Follow these instructions for evaluation/test runs:
