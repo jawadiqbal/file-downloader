@@ -27,7 +27,6 @@ const sftpDownloader = require('../service/sftpDownloader');
  *	    "protocol": "ftp",
  *	    "url": "ftp://demo.wftpserver.com/download/manual_en.pdf",
  *	    "config": {
- *        "host": "demo.wftpserver.com",
  *		    "port": 21,
  *	      "user": "demo-user",
  *	      "password": "demo-user"

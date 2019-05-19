@@ -20,7 +20,7 @@ function getDestination(args) {
 function getFilePath(args) {
   let filePath = args[3];
   for (let i = 4; i < args.length; i += 1) {
-    filePath += `//${args[i]}`;
+    filePath += `/${args[i]}`;
   }
   return filePath;
 }
