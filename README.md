@@ -1,5 +1,11 @@
 ## Getting Started
 
+This is a file downloader application based on Node.js that takes download requests in the form of API calls and saves files to preconfigured location in the disk. Following features are currently implemented:
+
+1. Fully synchronous file download support for HTTP, HTTPS, FTP and SFTP
+2. Incomplete downloads auto-removed from disk
+3. Check for download size exceeding available disk space for HTTP and HTTPS
+
 This project is built on a modified Express.js boilerplate based on [this](https://github.com/kunalkapadia/express-mongoose-es6-rest-api). Please refer to the generated docs for API documentation. For evaluation/test run purpose, please set the environment to 'dev' or 'local' and start the program in 'debug' mode. You can find detailed log output in the console, while the API immediately responds while queueing the download network call in the Node.js event loop.
 
 To-Do:
@@ -16,9 +22,9 @@ To-Do:
 _important_
 Follow these instructions for evaluation/test runs:
 
-1. download API path: `http://localhost:4040/api/v1/download`
-2. NODE_ENV: `local`
-3. Install dependencies with `yarn` and install any missing tools globally with `npm`
+1. Download API path: `http://localhost:4040/api/v1/download`
+2. Create `.env` from `.env.example`, set `NODE_ENV='local'` and configure `DOWNLOAD_PATH`
+3. Install dependencies with `yarn` and install any missing tools globally with `npm install -g <package>`
 4. Generate docs: `yarn predocs`
 5. Start doc server: `yarn docs`
 6. Start with: `yarn start:debug`
