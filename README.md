@@ -18,6 +18,7 @@ To-Do:
 6. Remove necessity for the `protocol` field in API requests
 7. Add support for unit testing and network call mocking
 8. Ensure good code coverage
+9. Make use of ES6 `import`
 
 _important_
 Follow these instructions for evaluation/test runs:

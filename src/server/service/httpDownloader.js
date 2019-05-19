@@ -1,8 +1,12 @@
 const axios = require('axios');
 const debug = require('debug')('file-downloader:httpDownloader');
 const fs = require('fs');
+const checkDiskSpace = require('check-disk-space');
 
 const common = require('./common');
+const {
+  constants
+} = require('../../config/constants');
 
 function download(url, destination) {
   const file = fs.createWriteStream(destination);
@@ -13,27 +17,31 @@ function download(url, destination) {
     responseType: 'stream'
   }).then(response => {
     const fileSizeInHost = response.headers['content-length'];
-    debug('File size in host: ', fileSizeInHost);
+    checkDiskSpace(constants.DOWNLOAD_PATH).then((diskSpace) => {
+      debug('Disk size:          ', diskSpace.size);
+      debug('Free space on disk: ', diskSpace.free);
+      debug('File size:          ', fileSizeInHost);
 
-    if (common.ifDownloadExceedsCapacity(fileSizeInHost)) {
-      debug('Operation failed: not enough space in disk');
-    } else {
-      response.data.pipe(file);
-      file.on('finish', () => {
-        file.close(() => {
-          const downloadedFileSizeInBytes = common.getFileSize(destination);
+      if (fileSizeInHost > diskSpace.free) {
+        debug('Operation failed: not enough space on disk');
+      } else {
+        response.data.pipe(file);
+        file.on('finish', () => {
+          file.close(() => {
+            const downloadedFileSizeInBytes = common.getFileSize(destination);
 
-          // eslint-disable-next-line eqeqeq
-          if (downloadedFileSizeInBytes != fileSizeInHost) {
-            debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
-            fs.unlink(destination, () => {
-              debug('Operation failed: incomplete download');
-            })
-          };
-          debug('Operation successful: file saved to ', destination);
+            // eslint-disable-next-line eqeqeq
+            if (downloadedFileSizeInBytes != fileSizeInHost) {
+              debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
+              fs.unlink(destination, () => {
+                debug('Operation failed: incomplete download');
+              })
+            };
+            debug('Operation successful: file saved to ', destination);
+          });
         });
-      });
-    };
+      };
+    })
   }).catch(
     error => {
       fs.unlink(destination, () => {
