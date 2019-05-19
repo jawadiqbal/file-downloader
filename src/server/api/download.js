@@ -4,6 +4,7 @@ const axios = require('axios');
 const path = require('path');
 const checkDiskSpace = require('check-disk-space');
 const Ftp = require('ftp');
+const Sftp = require('ssh2-sftp-client')
 
 const {
   DOWNLOAD_PATH
@@ -26,11 +27,12 @@ const {
  *      "url": "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe"
  *    }
  * 
- * @apiParamExample {json} Request-Example FTP Auth:
+ * @apiParamExample {json} Request-Example FTP Authenticated:
  *    {
  *	    "protocol": "ftp",
  *	    "url": "ftp://demo.wftpserver.com/download/manual_en.pdf",
  *	    "config": {
+ *        "host": "demo.wftpserver.com",
  *		    "port": 21,
  *	      "user": "demo-user",
  *	      "password": "demo-user"
@@ -44,6 +46,18 @@ const {
  *      "config": {}
  *    }
  *
+ * @apiParamExample {json} Request-Example SFTP:
+ *    {
+ *      "protocol": "sftp",
+ *	    "url": "sftp://192.168.0.105/testdata/testfile.txt",
+ *	    "config": {
+ *		    "host": "192.168.0.105",
+ *		    "port": 22,
+ *		    "username": "tester",
+ *		    "password": "password"
+ *	    }
+ *    }
+ * 
  * @apiSuccessExample {json} Success-Response:
  *    HTTP/1.1 200 OK
  *    {
@@ -56,7 +70,9 @@ const {
  *      "message": "Protocol not supported!"
  *    }
  */
-function download(req, res) {
+
+// eslint-disable-next-line no-unused-vars
+function download(req, res, _next) {
   debug('requesting to /api/v1/download | POST | params: ', req.body);
 
   const {
@@ -75,24 +91,42 @@ function download(req, res) {
 
   const file = fs.createWriteStream(destination);
 
-  if (protocol === 'ftp') {
+  if (protocol === 'sftp') {
     const {
       config
     } = req.body;
-    // let securityConfig = {}
 
     if (!('host' in config)) {
       config.host = args[2];
     }
 
-    // if (protocol === 'ftps') {
-    //   securityConfig = {
-    //     secure: true,
-    //     secureOptions: {
-    //       rejectUnauthorized: false
-    //     }
-    //   }
-    // }
+    let filePath = args[3];
+    for (let i = 4; i < args.length; i += 1) {
+      filePath += `//${args[i]}`;
+    }
+
+    debug('File path: ', filePath)
+
+    const c = new Sftp();
+
+    c.connect({
+      ...config
+    }, 'once').then(() => {
+      c.fastGet(String(filePath), String(destination), {}).then(() => {
+        debug('file download successful');
+      }).catch(err => {
+        debug(err);
+      })
+    });
+
+  } else if (protocol === 'ftp') {
+    const {
+      config
+    } = req.body;
+
+    if (!('host' in config)) {
+      config.host = args[2];
+    }
 
     let filePath = args[3];
     for (let i = 4; i < args.length; i += 1) {
@@ -112,19 +146,6 @@ function download(req, res) {
         stream.pipe(file);
         file.on('finish', () => {
           file.close(() => {
-            // const downloadedFileSizeInBytes = fs.statSync(destination).size;
-            // debug('Downloaded file size: ', downloadedFileSizeInBytes);
-
-            // // eslint-disable-next-line eqeqeq
-            // if (downloadedFileSizeInBytes != fileSizeInHost) {
-            //   debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
-            //   fs.unlink(destination, () => {
-            //     // return res.status(500).send({
-            //     //   message: 'Download incomplete! removing file from disk.'
-            //     // });
-            //     debug('Operation failed: incomplete download');
-            //   })
-            // };
             debug('Operation successful: file saved to ', destination);
           });
         });
@@ -133,7 +154,6 @@ function download(req, res) {
 
     c.connect({
       ...config
-      // ...securityConfig
     });
   } else if (protocol === 'http' || protocol === 'https') {
     axios({
