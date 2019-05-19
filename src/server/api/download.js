@@ -1,4 +1,4 @@
-const debug = require('debug')('file-downloader:*');
+const debug = require('debug')('file-downloader:download');
 const fs = require('fs');
 const axios = require('axios');
 const path = require('path');

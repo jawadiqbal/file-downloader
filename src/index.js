@@ -2,7 +2,7 @@
 const config = require('./config/config');
 const app = require('./config/express');
 
-const debug = require('debug')('file-downloader:*');
+const debug = require('debug')('file-downloader:index');
 
 // make bluebird default Promise
 Promise = require('bluebird'); // eslint-disable-line no-global-assign
