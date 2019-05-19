@@ -1,14 +1,9 @@
 const debug = require('debug')('file-downloader:download');
-const fs = require('fs');
-const axios = require('axios');
-const path = require('path');
-const checkDiskSpace = require('check-disk-space');
-const Ftp = require('ftp');
-const Sftp = require('ssh2-sftp-client')
 
-const {
-  DOWNLOAD_PATH
-} = process.env;
+const httpDownloader = require('../service/httpDownloader');
+const ftpDownloader = require('../service/ftpDownloader')
+const common = require('../service/common');
+const sftpDownloader = require('../service/sftpDownloader');
 
 /**
  * @api {post} /download Download target file
@@ -51,7 +46,6 @@ const {
  *      "protocol": "sftp",
  *	    "url": "sftp://192.168.0.105/testdata/testfile.txt",
  *	    "config": {
- *		    "host": "192.168.0.105",
  *		    "port": 22,
  *		    "username": "tester",
  *		    "password": "password"
@@ -77,126 +71,25 @@ function download(req, res, _next) {
 
   const {
     protocol,
-    url
+    url,
+    config
   } = req.body;
-
   const args = url.split('/');
-  const fileName = args[args.length - 1];
 
-  fs.mkdir(path.join(DOWNLOAD_PATH), error => {
-    debug(error);
-  });
-
-  const destination = path.join(DOWNLOAD_PATH, fileName);
-
-  const file = fs.createWriteStream(destination);
+  const destination = common.getDestination(args);
 
   if (protocol === 'sftp') {
-    const {
-      config
-    } = req.body;
-
     if (!('host' in config)) {
       config.host = args[2];
     }
-
-    let filePath = args[3];
-    for (let i = 4; i < args.length; i += 1) {
-      filePath += `//${args[i]}`;
-    }
-
-    debug('File path: ', filePath)
-
-    const c = new Sftp();
-
-    c.connect({
-      ...config
-    }, 'once').then(() => {
-      c.fastGet(String(filePath), String(destination), {}).then(() => {
-        debug('file download successful');
-      }).catch(err => {
-        debug(err);
-      })
-    });
-
+    sftpDownloader.download(args, destination, config);
   } else if (protocol === 'ftp') {
-    const {
-      config
-    } = req.body;
-
     if (!('host' in config)) {
       config.host = args[2];
     }
-
-    let filePath = args[3];
-    for (let i = 4; i < args.length; i += 1) {
-      filePath += `//${args[i]}`;
-    }
-
-    debug('File path: ', filePath)
-
-    const c = new Ftp();
-
-    c.on('ready', () => {
-      c.get(filePath, (err, stream) => {
-        if (err) throw err;
-        stream.once('close', () => {
-          c.end();
-        });
-        stream.pipe(file);
-        file.on('finish', () => {
-          file.close(() => {
-            debug('Operation successful: file saved to ', destination);
-          });
-        });
-      });
-    });
-
-    c.connect({
-      ...config
-    });
+    ftpDownloader.download(args, destination, config);
   } else if (protocol === 'http' || protocol === 'https') {
-    axios({
-      method: 'get',
-      url,
-      responseType: 'stream'
-    }).then(response => {
-      const fileSizeInHost = response.headers['content-length'];
-      debug('File size in host: ', fileSizeInHost);
-
-      checkDiskSpace(DOWNLOAD_PATH).then((diskSpace) => {
-        debug('Disk size:          ', diskSpace.size);
-        debug('Free space in disk: ', diskSpace.free);
-        if (diskSpace.free < fileSizeInHost) {
-          debug('Operation failed: not enough space in disk');
-        } else {
-          response.data.pipe(file);
-          file.on('finish', () => {
-            file.close(() => {
-              const downloadedFileSizeInBytes = fs.statSync(destination).size;
-              debug('Downloaded file size: ', downloadedFileSizeInBytes);
-
-              // eslint-disable-next-line eqeqeq
-              if (downloadedFileSizeInBytes != fileSizeInHost) {
-                debug(downloadedFileSizeInBytes, ' vs ', fileSizeInHost);
-                fs.unlink(destination, () => {
-                  debug('Operation failed: incomplete download');
-                })
-              };
-              debug('Operation successful: file saved to ', destination);
-            });
-          });
-        }
-      });
-    }).catch(
-      error => {
-        fs.unlink(destination, () => {
-          file.close();
-        });
-        debug(error);
-        debug('Operation failed: host/network error');
-      }
-    );
+    httpDownloader.download(url, destination);
   } else {
     return res.status(400).send({
       message: 'Protocol not supported!'
