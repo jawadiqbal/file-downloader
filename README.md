@@ -1,6 +1,6 @@
 ## Getting Started
 
-This project is built on a modified Express.js boilerplate based on [this]https://github.com/kunalkapadia/express-mongoose-es6-rest-api. Please refer to the generated docs for API documentation. For evaluation/test run purpose, please set the environment to 'dev' or 'local' and start the program in 'debug' mode. You can find detailed log output in the console, while the API immediately responds while queueing the download network call in the Node.js event loop.
+This project is built on a modified Express.js boilerplate based on [this](https://github.com/kunalkapadia/express-mongoose-es6-rest-api). Please refer to the generated docs for API documentation. For evaluation/test run purpose, please set the environment to 'dev' or 'local' and start the program in 'debug' mode. You can find detailed log output in the console, while the API immediately responds while queueing the download network call in the Node.js event loop.
 
 To-Do:
 
