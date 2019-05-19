@@ -16,12 +16,12 @@ To-Do:
 _important_
 Follow these instructions for evaluation/test runs:
 
-download API path: `http://localhost:4040/api/v1/download`
-NODE_ENV: `local`
-Install dependencies with `yarn` and install any missing tools globally with `npm`
-Generate docs: `yarn predocs`
-Start doc server: `yarn docs`
-Start with: `yarn start:debug`
+1. download API path: `http://localhost:4040/api/v1/download`
+2. NODE_ENV: `local`
+3. Install dependencies with `yarn` and install any missing tools globally with `npm`
+4. Generate docs: `yarn predocs`
+5. Start doc server: `yarn docs`
+6. Start with: `yarn start:debug`
 
 Clone the repo:
 
