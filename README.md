@@ -1,5 +1,28 @@
 ## Getting Started
 
+This project is built on a modified Express.js boilerplate based on [this]https://github.com/kunalkapadia/express-mongoose-es6-rest-api. Please refer to the generated docs for API documentation. For evaluation/test run purpose, please set the environment to 'dev' or 'local' and start the program in 'debug' mode. You can find detailed log output in the console, while the API immediately responds while queueing the download network call in the Node.js event loop.
+
+To-Do:
+
+1. Implement request hold till download completes, so that we can send a proper download status with the response
+2. Make use of ES8 `async` and `await` to eliminate callback chaining
+3. Implement download feature for FTPS, both implicit and explicit
+4. Allow downloading directories where possible
+5. Add public/private key support for `ssh` based protocol(s)
+6. Remove necessity for the `protocol` field in API requests
+7. Add support for unit testing and network call mocking
+8. Ensure good code coverage
+
+_important_
+Follow these instructions for evaluation/test runs:
+
+download API path: `http://localhost:4040/api/v1/download`
+NODE_ENV: `local`
+Install dependencies with `yarn` and install any missing tools globally with `npm`
+Generate docs: `yarn predocs`
+Start doc server: `yarn docs`
+Start with: `yarn start:debug`
+
 Clone the repo:
 
 ```sh
@@ -24,6 +47,7 @@ Set environment (vars):
 ```sh
 cp .env.example .env
 # Set NODE_ENV *important*
+# Set to local/dev for test runs with this project
 # Allowed values:
 #   local
 #   dev
@@ -38,6 +62,7 @@ Start server:
 yarn start
 
 # Selectively set DEBUG env var to get logs
+# Please select this mode for test runs with the project
 yarn start:debug
 ```
 
@@ -57,26 +82,6 @@ yarn test:watch
 
 # Run tests enforcing code coverage (configured via .istanbul.yml)
 yarn test:check-coverage
-```
-
-Lint:
-
-```sh
-# Lint code with ESLint
-yarn lint
-
-# Run lint on any file change
-yarn lint:watch
-```
-
-Other gulp tasks:
-
-```sh
-# Wipe out dist and coverage directory
-gulp clean
-
-# Default task: Wipes out dist and coverage directory. Compiles using babel.
-gulp
 ```
 
 ##### Deployment
