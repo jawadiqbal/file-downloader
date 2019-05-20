@@ -18,14 +18,12 @@ const sftpDownloader = require('../service/sftpDownloader');
  *
  * @apiParamExample {json} Request-Example HTTPS:
  *    {
- *      "protocol": "https",
  *      "url": "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe"
  *    }
  *
  * @apiParamExample {json} Request-Example FTP Authenticated:
  *    {
- *	    "protocol": "ftp",
- *	    "url": "ftp://demo.wftpserver.com/download/manual_en.pdf",
+ *      "url": "ftp://demo.wftpserver.com/download/manual_en.pdf",
  *	    "config": {
  *		    "port": 21,
  *	      "user": "demo-user",
@@ -35,14 +33,12 @@ const sftpDownloader = require('../service/sftpDownloader');
  *
  * @apiParamExample {json} Request-Example FTP Public:
  *    {
- *      "protocol": "ftp",
  *      "url": "ftp://speedtest.tele2.net/5MB.zip",
  *      "config": {}
  *    }
  *
  * @apiParamExample {json} Request-Example SFTP:
  *    {
- *      "protocol": "sftp",
  *	    "url": "sftp://192.168.0.105/testdata/testfile.txt",
  *	    "config": {
  *		    "port": 22,
