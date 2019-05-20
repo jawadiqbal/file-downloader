@@ -20,6 +20,7 @@ To-Do:
 8. Implement working code coverage
 9. Make use of ES6 `import`
 10. Configurable timeout for slow connections
+11. Append version in case of duplicate files instead of overwriting
 
 _important_
 Follow these instructions for evaluation/test runs:
