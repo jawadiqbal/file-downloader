@@ -42,10 +42,15 @@ function getFileDirectory(args) {
   return filePath;
 }
 
+function getProtocol(args) {
+  return args[0].slice(0, args[0].length - 1);
+}
+
 module.exports = {
   getDestination,
   getFilePath,
   getFileSize,
   // ifDownloadExceedsCapacity,
-  getFileDirectory
+  getFileDirectory,
+  getProtocol
 };

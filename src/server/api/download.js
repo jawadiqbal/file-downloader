@@ -69,12 +69,12 @@ function download(req, res, _next) {
   debug('requesting to /api/v1/download | POST | params: ', req.body);
 
   const {
-    protocol,
     url,
     config
   } = req.body;
   const args = url.split('/');
 
+  const protocol = common.getProtocol(args);
   const destination = common.getDestination(args);
 
   if (protocol === 'sftp') {

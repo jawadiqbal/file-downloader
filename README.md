@@ -24,12 +24,13 @@ To-Do:
 _important_
 Follow these instructions for evaluation/test runs:
 
-1. Download API path: `http://localhost:4040/api/v1/download`
-2. Create `.env` from `.env.example`, set `NODE_ENV='local'` and configure `DOWNLOAD_PATH`
-3. Install dependencies with `yarn` and install any missing tools globally with `npm install -g <package>`
-4. Generate docs: `yarn predocs`
-5. Start doc server: `yarn docs`
-6. Start with: `yarn start:debug`
+1. Create `.env` from `.env.example`, set `NODE_ENV='local'` and configure `DOWNLOAD_PATH`
+2. Install dependencies with `yarn` and install any missing tools globally with `npm install -g <package>`
+3. Generate docs: `yarn predocs`
+4. Start doc server: `yarn docs`
+5. Start with: `yarn start:debug`
+6. Download API path: `POST: http://localhost:4040/api/v1/download` - refer to doc for details
+7. Must include protocol in the POST request `url` field
 
 Clone the repo:
 
