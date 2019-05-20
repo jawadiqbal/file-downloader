@@ -1,7 +1,7 @@
 const debug = require('debug')('file-downloader:download');
 
 const httpDownloader = require('../service/httpDownloader');
-const ftpDownloader = require('../service/ftpDownloader')
+const ftpDownloader = require('../service/ftpDownloader');
 const common = require('../service/common');
 const sftpDownloader = require('../service/sftpDownloader');
 
@@ -21,7 +21,7 @@ const sftpDownloader = require('../service/sftpDownloader');
  *      "protocol": "https",
  *      "url": "https://web.whatsapp.com/desktop/windows/release/x64/WhatsAppSetup.exe"
  *    }
- * 
+ *
  * @apiParamExample {json} Request-Example FTP Authenticated:
  *    {
  *	    "protocol": "ftp",
@@ -32,7 +32,7 @@ const sftpDownloader = require('../service/sftpDownloader');
  *	      "password": "demo-user"
  *      }
  *    }
- * 
+ *
  * @apiParamExample {json} Request-Example FTP Public:
  *    {
  *      "protocol": "ftp",
@@ -50,13 +50,13 @@ const sftpDownloader = require('../service/sftpDownloader');
  *		    "password": "password"
  *	    }
  *    }
- * 
+ *
  * @apiSuccessExample {json} Success-Response:
  *    HTTP/1.1 200 OK
  *    {
  *      "message": "Request accepted successfully!"
  *    }
- * 
+ *
  * @apiErrorExample {json} Error-Response:
  *    HTTP/1.1 400 Bad Request
  *    {
@@ -68,10 +68,7 @@ const sftpDownloader = require('../service/sftpDownloader');
 function download(req, res, _next) {
   debug('requesting to /api/v1/download | POST | params: ', req.body);
 
-  const {
-    url,
-    config
-  } = req.body;
+  const { url, config } = req.body;
   const args = url.split('/');
 
   const protocol = common.getProtocol(args);

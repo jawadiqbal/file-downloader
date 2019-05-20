@@ -3,18 +3,16 @@ const fs = require('fs');
 const path = require('path');
 // const checkDiskSpace = require('check-disk-space');
 
-const {
-  constants
-} = require('../../config/constants');
+const { DOWNLOAD_PATH } = process.env;
 
 function getDestination(args) {
   const fileName = args[args.length - 1];
 
-  fs.mkdir(path.join(constants.DOWNLOAD_PATH), error => {
+  fs.mkdir(path.join(DOWNLOAD_PATH), error => {
     debug(error);
   });
 
-  return path.join(constants.DOWNLOAD_PATH, fileName);
+  return path.join(DOWNLOAD_PATH, fileName);
 }
 
 function getFilePath(args) {
@@ -31,7 +29,7 @@ function getFileSize(destination) {
 }
 
 // // To Do
-// function ifDownloadExceedsCapacity(fileSize) {  
+// function ifDownloadExceedsCapacity(fileSize) {
 // };
 
 function getFileDirectory(args) {

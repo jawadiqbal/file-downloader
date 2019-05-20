@@ -4,9 +4,8 @@ const Ftp = require('ftp');
 const checkDiskSpace = require('check-disk-space');
 
 const common = require('./common');
-const {
-  constants
-} = require('../../config/constants');
+
+const { DOWNLOAD_PATH } = process.env;
 
 function download(args, destination, config) {
   const file = fs.createWriteStream(destination);
@@ -14,18 +13,17 @@ function download(args, destination, config) {
   const fileName = args[args.length - 1];
   const fileDirectory = common.getFileDirectory(args);
 
-  debug('File path: ', filePath)
+  debug('File path: ', filePath);
 
   const c = new Ftp();
 
   c.on('ready', () => {
     c.list(fileDirectory, (errorList, list) => {
-
       if (errorList) throw errorList;
 
       // eslint-disable-next-line eqeqeq
       const fileSize = list.find(a => a.name == fileName).size;
-      checkDiskSpace(constants.DOWNLOAD_PATH).then((diskSpace) => {
+      checkDiskSpace(DOWNLOAD_PATH).then(diskSpace => {
         debug('Disk size:          ', diskSpace.size);
         debug('Free space on disk: ', diskSpace.free);
         debug('File size:          ', fileSize);
@@ -47,19 +45,16 @@ function download(args, destination, config) {
                   debug(downloadedFileSizeInBytes, ' vs ', fileSize);
                   fs.unlink(destination, () => {
                     debug('Operation failed: incomplete download');
-                  })
-                };
+                  });
+                }
                 debug('Operation successful: file saved to ', destination);
               });
             });
           });
         }
-      })
-
+      });
     });
   });
-
-
 
   c.connect({
     ...config

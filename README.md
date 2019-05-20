@@ -16,8 +16,8 @@ To-Do:
 4. Allow downloading directories where possible
 5. Add public/private key support for `ssh` based protocol(s)
 6. Remove necessity for the `protocol` field in API requests
-7. Add support for unit testing and network call mocking
-8. Ensure good code coverage
+7. Add support for full unit testing and network call mocking
+8. Implement working code coverage
 9. Make use of ES6 `import`
 10. Configurable timeout for slow connections
 
@@ -31,6 +31,7 @@ Follow these instructions for evaluation/test runs:
 5. Start with: `yarn start:debug`
 6. Download API path: `POST: http://localhost:4040/api/v1/download` - refer to doc for details
 7. Must include protocol in the POST request `url` field
+8. Run unit tests using `yarn test`
 
 Clone the repo:
 
