@@ -12,7 +12,6 @@ const sftpDownloader = require('../service/sftpDownloader');
  * @apiVersion 1.0.0
  * @apiDescription This is an api for downloading a file from a url with optional config.
  *
- * @apiParam {String} protocol Protocol
  * @apiParam {String} url File URL
  * @apiParam {Object} config Optional configuration for authenticated servers
  *
